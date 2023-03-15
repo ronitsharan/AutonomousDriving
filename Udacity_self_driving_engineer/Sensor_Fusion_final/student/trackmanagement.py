@@ -135,13 +135,18 @@ class Trackmanagement:
             if meas_list: # if not empty
                 if meas_list[0].sensor.in_fov(track.x):
                     # your code goes here
-                    track.last_detections.append(0)
-                    track.update_score()
+                    #track.last_detections.append(0)
+                    #track.update_score()
+                    track.score -= 1./params.window
 
         # delete old tracks   
         for track in self.track_list:
-            if track.state != 'initialized' and track.score < params.delete_threshold \
-                or track.P[0,0] > params.max_P or track.P[1,1] > params.max_P:
+            #if track.state != 'initialized' and track.score < params.delete_threshold \
+             #   or track.P[0,0] > params.max_P or track.P[1,1] > params.max_P:
+              #  self.delete_track(track)
+            if (track.state == "confirmed" and track.score < params.delete_threshold) or \
+               ((track.P[0,0] > params.max_P) or (track.P[1,1] > params.max_P) and \
+               (track.state == "initialised" or track.state == "tentative")):
                 self.delete_track(track)
 
         ############
